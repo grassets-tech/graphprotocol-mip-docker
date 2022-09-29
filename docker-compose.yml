@@ -105,15 +105,15 @@ services:
       INDEXER_AGENT_RESTAKE_REWARDS: 'false'
       INDEXER_AGENT_ETHEREUM_NETWORK: ${INDEXER_AGENT_ETHEREUM_NETWORK}
       INDEXER_AGENT_ETHEREUM: '${INDEXER_AGENT_ETHEREUM}'
-      INDEXER_AGENT_MNEMONIC: ${INDEXER_AGENT_MNEMONIC}
-      INDEXER_AGENT_INDEXER_ADDRESS: ${INDEXER_AGENT_INDEXER_ADDRESS}
+      INDEXER_AGENT_MNEMONIC: 'MNEMONIC' # <------------------------------------------------------------------
+      INDEXER_AGENT_INDEXER_ADDRESS: ${INDEXER_AGENT_INDEXER_ADDRESS} # <------------------------------------------------------------------
       INDEXER_AGENT_INDEX_NODE_IDS: "index_node_0"
       INDEXER_AGENT_GRAPH_NODE_QUERY_ENDPOINT: http://caddy:8000
       INDEXER_AGENT_GRAPH_NODE_STATUS_ENDPOINT: http://index-node-0:8030/graphql
       INDEXER_AGENT_GRAPH_NODE_ADMIN_ENDPOINT: http://index-node-0:8020
       INDEXER_AGENT_INDEXER_MANAGEMENT_PORT: 18000
       INDEXER_AGENT_PUBLIC_INDEXER_URL: ${INDEXER_AGENT_PUBLIC_INDEXER_URL}
-      INDEXER_AGENT_INDEXER_GEO_COORDINATES: "53.3501 -6.2661"
+      INDEXER_AGENT_INDEXER_GEO_COORDINATES: "53.3501 -6.2661" # <------------------------------------------------------------------
       INDEXER_AGENT_NETWORK_SUBGRAPH_DEPLOYMENT: '${INDEXER_AGENT_NETWORK_SUBGRAPH_DEPLOYMENT}'
       INDEXER_AGENT_NETWORK_SUBGRAPH_ENDPOINT: ${INDEXER_AGENT_NETWORK_SUBGRAPH_ENDPOINT}
       INDEXER_AGENT_COLLECT_RECEIPTS_ENDPOINT: ${INDEXER_AGENT_COLLECT_RECEIPTS_ENDPOINT}
@@ -153,8 +153,8 @@ services:
     environment:
       INDEXER_SERVICE_ETHEREUM_NETWORK: ${INDEXER_SERVICE_ETHEREUM_NETWORK}
       INDEXER_SERVICE_ETHEREUM: ${INDEXER_SERVICE_ETHEREUM}
-      INDEXER_SERVICE_MNEMONIC: ${INDEXER_SERVICE_MNEMONIC}
-      INDEXER_SERVICE_INDEXER_ADDRESS: ${INDEXER_SERVICE_INDEXER_ADDRESS}
+      INDEXER_SERVICE_MNEMONIC: 'MNEMONIC' # <------------------------------------------------------------------
+      INDEXER_SERVICE_INDEXER_ADDRESS: ${INDEXER_SERVICE_INDEXER_ADDRESS} # <------------------------------------------------------------------
       INDEXER_SERVICE_GRAPH_NODE_QUERY_ENDPOINT: http://caddy:8000
       INDEXER_SERVICE_GRAPH_NODE_STATUS_ENDPOINT: http://index-node-0:8030/graphql
       INDEXER_SERVICE_NETWORK_SUBGRAPH_DEPLOYMENT: '${INDEXER_SERVICE_NETWORK_SUBGRAPH_DEPLOYMENT}'
@@ -217,7 +217,7 @@ services:
     environment:
       NGINX_PROXY_CONTAINER: nginx-proxy
       DEFAULT_EMAIL: ${EMAIL:-contact@grassets.tech}
-      
+
 # -----------------------------postgres-graph--------------------------
   postgres-graph:
     image: postgres
@@ -267,32 +267,6 @@ services:
       - "24224:24224"
       - "24224:24224/udp"
 
-# ------------------------------FLUENT--------------------------
-  prometheus:
-    image: prom/prometheus:v2.20.0
-    container_name: prometheus
-    volumes:
-      - ./prometheus:/etc/prometheus
-      - prometheus_data:/prometheus
-    environment:
-      - VIRTUAL_HOST=${INDEX_HOST:-prometheus-1.graphinx.grassets.tech}
-      - VIRTUAL_PORT=9090
-      - LETSENCRYPT_HOST=${INDEX_HOST:-prometheus-1.graphinx.grassets.tech}
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/etc/prometheus/console_libraries'
-      - '--web.console.templates=/etc/prometheus/consoles'
-      - '--storage.tsdb.retention.time=200h'
-      - '--web.enable-lifecycle'
-    restart: unless-stopped
-    expose:
-      - 9090
-    networks:
-      - monitor-net
-    labels:
-      org.label-schema.group: "monitoring"
-
 # ------------------------------PROMETHEUS--------------------------
   prometheus:
     image: prom/prometheus:v2.20.0
@@ -318,24 +292,7 @@ services:
       - monitor-net
     labels:
       org.label-schema.group: "monitoring"
- 
- # ------------------------------ALERTMANAGER--------------------------
-  alertmanager:
-    image: prom/alertmanager:v0.21.0
-    container_name: alertmanager
-    volumes:
-      - ./alertmanager:/etc/alertmanager
-    command:
-      - '--config.file=/etc/alertmanager/config.yml'
-      - '--storage.path=/alertmanager'
-    restart: unless-stopped
-    expose:
-      - 9093
-    networks:
-      - monitor-net
-    labels:
-      org.label-schema.group: "monitoring"
- 
+
  # ------------------------------NODEEXPORTER--------------------------
   nodeexporter:
     image: prom/node-exporter:v1.0.1
@@ -374,7 +331,7 @@ services:
       - monitor-net
     labels:
       org.label-schema.group: "monitoring"
- 
+
  # ------------------------------GRAFANA--------------------------
   grafana:
     image: grafana/grafana
@@ -385,6 +342,7 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER}
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+
       - GF_USERS_ALLOW_SIGN_UP=false
       - GF_SECURITY_DISABLE_BRUTE_FORCE_LOGIN_PROTECTION=true
       - GF_LOG_FILTERS=rendering:debug
