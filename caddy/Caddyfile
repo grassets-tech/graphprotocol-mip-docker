@@ -1,0 +1,7 @@
+:8000 {
+    reverse_proxy query-node-0:8000 #query-node-1:8000 query-node-2:8000 query-node-3:8000 query-node-4:8000
+}
+
+:8001 {
+    reverse_proxy query-node-0:8001
+}
