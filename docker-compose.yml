@@ -216,7 +216,7 @@ services:
     restart: unless-stopped
     environment:
       NGINX_PROXY_CONTAINER: nginx-proxy
-      DEFAULT_EMAIL: ${EMAIL:-contact@grassets.tech}
+      DEFAULT_EMAIL: ${EMAIL}
 
 # -----------------------------postgres-graph--------------------------
   postgres-graph:
