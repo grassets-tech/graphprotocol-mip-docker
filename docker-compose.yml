@@ -35,6 +35,9 @@ services:
       GRAPH_LOG_QUERY_TIMING: gql
       GRAPH_ALLOW_NON_DETERMINISTIC_FULLTEXT_SEARCH: ${FULLTEXT_SEARCH:-true}
       GRAPH_ALLOW_NON_DETERMINISTIC_IPFS: ${FULLTEXT_SEARCH:-true}
+      VIRTUAL_HOST: ${QUERY_HOST}
+      VIRTUAL_PORT: 8000
+      LETSENCRYPT_HOST: ${QUERY_HOST}
     restart: unless-stopped
     logging:
       driver: "fluentd"
@@ -422,7 +425,7 @@ services:
 # ------------------------------SHELL--------------------------
   shell-tools:
     container_name: shell-tools
-    image: davaymne/shell-tools:v0.16.0.1
+    image: davaymne/shell-tools:v0.19.3.1
     volumes:
        - ./tools:/root/tools/
     networks:
