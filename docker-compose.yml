@@ -22,7 +22,10 @@ services:
     depends_on:
       - postgres-graph
       - fluentd
+    volumes:
+      - ./configs:/root/configs/
     environment:
+      GRAPH_NODE_CONFIG: /root/configs/config.toml
       node_role: "query-node"
       node_id: "query-node-0"
       postgres_host: postgres-graph
@@ -30,7 +33,7 @@ services:
       postgres_pass: ${DB_PASS:-let-me-in}
       postgres_db: ${DB_NAME:-graph-node}
       ipfs: '${IPFS_ENDPOINT}'
-      ethereum: '${GNOSIS}'
+      #ethereum: '${GNOSIS}'
       RUST_LOG: info
       GRAPH_LOG_QUERY_TIMING: gql
       GRAPH_ALLOW_NON_DETERMINISTIC_FULLTEXT_SEARCH: ${FULLTEXT_SEARCH:-true}
@@ -58,7 +61,10 @@ services:
     depends_on:
       - postgres-graph
       - fluentd
+    volumes:
+      - ./configs:/root/configs/
     environment:
+      GRAPH_NODE_CONFIG: /root/configs/config.toml
       node_role: "index-node"
       node_id: "index-node-0"
       postgres_host: postgres-graph
@@ -66,7 +72,7 @@ services:
       postgres_pass: ${DB_PASS:-let-me-in}
       postgres_db: ${DB_NAME:-graph-node}
       ipfs: '${IPFS_ENDPOINT}'
-      ethereum: '${GNOSIS}'
+      #ethereum: '${GNOSIS}'
       RUST_LOG: info
       BLOCK_INGESTOR: "index-node-0" # Only need to specify one block ingestor
       GRAPH_MAX_GAS_PER_HANDLER: 1000000000000000
@@ -126,9 +132,8 @@ services:
       INDEXER_AGENT_POSTGRES_PASSWORD: ${DB_PASS:-let-me-in}
       INDEXER_AGENT_POSTGRES_DATABASE: ${AGENT_DB_NAME:-indexer-agent}
       INDEXER_AGENT_OFFCHAIN_SUBGRAPHS: ${INDEXER_AGENT_OFFCHAIN_SUBGRAPHS}
-#      VIRTUAL_HOST: ${AGENT_HOST:-agent.graphinx.ml}
-#      VIRTUAL_PORT: 18000
-#      LETSENCRYPT_HOST: ${AGENT_HOST:-agent.graphinx.ml}
+      EPOCH_SUBGRAPH_ENDPOINT: ${INDEXER_AGENT_EPOCH_SUBGRAPH_ENDPOINT}
+      INDEXER_AGENT_EPOCH_SUBGRAPH_ENDPOINT: ${INDEXER_AGENT_EPOCH_SUBGRAPH_ENDPOINT}
     restart: unless-stopped
     logging:
       driver: "fluentd"
